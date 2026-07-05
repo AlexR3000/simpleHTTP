@@ -57,4 +57,4 @@ Testing/
 *.qbs.user
 *.qmlproject.user
 *.cmake.user
-/CMakeSettings.json
+/.vs
