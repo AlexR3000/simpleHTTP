@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 
-project(simpleHTTP)
+project(myproject)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -36,31 +36,25 @@ if(ENABLE_CLANG_TIDY)
     find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
     message(STATUS "Found clang-tidy: ${CLANG_TIDY_EXE}")
     set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXE}")
+    set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 endif()
+
 
 # Create a library from the project files
 # ADD ALL YOUR SOURCE FILES HERE
-add_library(myproject src/project.cpp)
+add_library(myproject src/project.cpp src/requestReceiver.cpp)
 target_include_directories(myproject PUBLIC "include")
 
 # Create an executable from the main file, linked to the project library
 add_executable(app src/main.cpp)
 target_link_libraries(app myproject)
 
-# Find GoogleTest package and create a test executable
-# find_package(GTest REQUIRED) already included via
-include(FetchContent)
-
-FetchContent_Declare(
-    googletest
-    URL https://github.com/google/googletest/archive/refs/tags/v1.17.0.zip
-)
 
 # Find GoogleTest package and create a test executable
 find_package(GTest CONFIG REQUIRED)
 enable_testing()
 add_executable(tests tests/test.cpp) # ADD ALL YOUR TEST FILES HERE
-target_link_libraries(tests PRIVATE GTest::gtest GTest::gtest_main)
+target_link_libraries(tests PRIVATE myproject GTest::gtest GTest::gtest_main)
 add_test(NAME Tests COMMAND tests)
 
 

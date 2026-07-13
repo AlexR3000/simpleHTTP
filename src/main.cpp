@@ -1,7 +1,18 @@
+
+#include "project.h"
+#include "requestReceiver.h"
+
 #include <iostream>
-#include <project.h>
+
 
 int main() {
+
     Project p;
-    std::cout << p.someFunction() << std::endl;
+    std::cout << p.someFunction() << " running test" << std::endl;
+
+
+    RequestReceiver receiver;
+    receiver.receive();
+
+
 }
