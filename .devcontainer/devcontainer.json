@@ -1,0 +1,25 @@
+{
+    "name": "cmake-linux",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": "."
+    },
+    "forwardPorts": [ 8080 ],
+    "runArgs": [
+        "-p",
+        "8080:8080"
+    ],
+    "workspaceFolder": "/workspaces/simpleHTTP",
+
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.cpptools",
+                "ms-vscode.cmake-tools"
+            ],
+            "settings": {
+                "cmake.configureOnOpen": true
+            }
+        }
+    }
+}
