@@ -42,7 +42,7 @@ endif()
 
 # Create a library from the project files
 # ADD ALL YOUR SOURCE FILES HERE
-add_library(myproject src/project.cpp src/requestReceiver.cpp)
+add_library(myproject  src/requestReceiver.cpp src/http/request.cpp src/http/requestParser.cpp)
 target_include_directories(myproject PUBLIC "include")
 
 # Create an executable from the main file, linked to the project library
@@ -53,7 +53,7 @@ target_link_libraries(app myproject)
 # Find GoogleTest package and create a test executable
 find_package(GTest CONFIG REQUIRED)
 enable_testing()
-add_executable(tests tests/test.cpp) # ADD ALL YOUR TEST FILES HERE
+add_executable(tests  tests/http/requestParserTest.cpp) # ADD ALL YOUR TEST FILES HERE
 target_link_libraries(tests PRIVATE myproject GTest::gtest GTest::gtest_main)
 add_test(NAME Tests COMMAND tests)
 
