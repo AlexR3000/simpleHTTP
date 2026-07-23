@@ -1,3 +1,3 @@
-# C++ Project Template
-A simple C++ project template using CMake with Google Test for testing and
-clang-tidy integration to check conformance to the C++ Core Guidelines.
+# SimpleHTTP
+A small project to implement a small Http Server using C++ and Cmake currently in the making. Planned to feature only the most basic functionalities.
+
