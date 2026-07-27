@@ -1,57 +1,25 @@
 #include "requestReceiver.h"
 #include "http/request.h"
+#include "http/requestParser.h"
+#include "net/socket.h"
 
 #include <string>
 #include <iostream>
 #include <array>
 #include <exception>
 
-#include <unistd.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 
-
-#include <map>
-#include <http/requestParser.h>
-
-
-// alex TODO refactor all in one class function
-Http::Request RequestReceiver::receive() {
-    sockaddr_in serverAddress{};
-    serverAddress.sin_family = AF_INET;
-    serverAddress.sin_port = htons(8080);
-    serverAddress.sin_addr.s_addr = INADDR_ANY;
-    int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
-    if (serverSocket < 0) {
-        std::cout << "failed to create socket" << std::endl;
-    }
-
-    // Using clang-tidy and c-style sockets are a bit tricky. C-style casts are not allowed
-    // but neither is reinterpret_cast
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-    int bound = bind(serverSocket, reinterpret_cast<sockaddr*>(&serverAddress), sizeof(serverAddress));
-    if (bound < 0) {
-        std::cout << "bind failed" << std::endl;
-    }
-
-    int listened = listen(serverSocket, 5);
-    if (listened < 0) {
-        std::cout << "failed to listen" << std::endl;
-    }
-    int clientSocket = accept(serverSocket, nullptr, nullptr);
-    if (clientSocket < 0) {
-        std::cout << "failed client" << std::endl;
-    }
-
-
-    std::array<char, 1024> buffer{};
+Http::Request RequestReceiver::receive(Net::Socket& receiverSocket) {
+    std::cout << "receiving" << std::endl;
+    std::array<char, RECEIVE_BUFFER_SIZE> buffer{};
 
     ssize_t bytesRead = 0;
     std::string rawRequestHeader = "";
     std::string rawRequestBody = "";
+    int flags = 0;
 
     // Read the header
-    while ((bytesRead = recv(clientSocket, buffer.data(), buffer.size(), 0)) > 0) {
+    while ((bytesRead = receiverSocket.receive(buffer.data(), buffer.size(), flags)) > 0) {
         rawRequestHeader.append(buffer.data(), bytesRead);
         auto terminalPosition = rawRequestHeader.find(HTTP_TERMINAL_CHUNK);
 
@@ -81,7 +49,7 @@ Http::Request RequestReceiver::receive() {
 
     // Read the body, if required
     while (rawRequestBody.length() < contentLength) {
-        bytesRead = recv(clientSocket, buffer.data(), buffer.size(), 0);
+        bytesRead = receiverSocket.receive(buffer.data(), buffer.size(), 0);
         if (bytesRead <= 0) {
             break;
         }
@@ -93,10 +61,7 @@ Http::Request RequestReceiver::receive() {
     }
 
     std::cout << "request received" << std::endl;
-    std::cout << rawRequestHeader << std::endl;
-
-    close(clientSocket);
-    close(serverSocket);    
+    std::cout << rawRequestHeader << std::endl; 
 
     return Http::Request();
 }

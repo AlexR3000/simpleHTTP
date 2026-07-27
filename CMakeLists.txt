@@ -42,7 +42,7 @@ endif()
 
 # Create a library from the project files
 # ADD ALL YOUR SOURCE FILES HERE
-add_library(myproject  src/requestReceiver.cpp src/http/request.cpp src/http/requestParser.cpp)
+add_library(myproject  src/requestReceiver.cpp src/http/request.cpp src/http/requestParser.cpp src/net/socket.cpp src/net/tcpListener.cpp)
 target_include_directories(myproject PUBLIC "include")
 
 # Create an executable from the main file, linked to the project library
