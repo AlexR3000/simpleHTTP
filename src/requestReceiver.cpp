@@ -33,35 +33,31 @@ Http::Request RequestReceiver::receive(Net::Socket& receiverSocket) {
 
     
     Http::RequestParser parser{};
-    std::unordered_map<std::string, std::vector<std::string>>  requestAttributes{};
-    Http::ParseError error = parser.parseHeaderAttributes(rawRequestHeader, requestAttributes);
+    Http::Request request{};
+    Http::ParseError error = parser.parseHeaderAttributes(rawRequestHeader, request);
 
     // alex TODO proper error handling for possible parser errors. 
     if (error != Http::ParseError::None) {
+        std::cout << static_cast<int>(error) << std::endl;
         throw std::runtime_error("Failed to parse Http header");
     }
 
-    size_t contentLength = 0;
-    if (requestAttributes.count("Content-Length") && !requestAttributes["Content-Length"].empty()) {
-        contentLength = std::stoi(requestAttributes["Content-Length"].front());
-    }
 
 
     // Read the body, if required
-    while (rawRequestBody.length() < contentLength) {
+    while (rawRequestBody.length() < request.contentLength) {
         bytesRead = receiverSocket.receive(buffer.data(), buffer.size(), 0);
         if (bytesRead <= 0) {
             break;
         }
 
         rawRequestBody.append(buffer.data(), bytesRead);
-        if (rawRequestBody.length() >= contentLength) {
+        if (rawRequestBody.length() >= request.contentLength) {
             break;
         }
     }
 
-    std::cout << "request received" << std::endl;
-    std::cout << rawRequestHeader << std::endl; 
+    request.body = rawRequestBody;
 
-    return Http::Request();
+    return request;
 }

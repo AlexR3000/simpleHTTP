@@ -27,4 +27,20 @@ int main() {
 
     RequestReceiver receiver;
     Http::Request request = receiver.receive(client);
+
+    std::cout << "accepted request" << std::endl;
+
+    std::cout << "method: " << static_cast<int>(request.method) << std::endl;
+    std::cout << "url: " << request.url << std::endl;
+    std::cout << "version: " << request.version << std::endl;
+    std::cout << "content-length: " << request.contentLength << std::endl;
+
+    std::cout << "other attributes: " << std::endl;
+    for (auto kv : request.headers) {
+        std::cout << kv.first << ": " << kv.second[0] << std::endl;
+    }
+
+
+    std::cout << "body: " << request.body << std::endl;
+
 }

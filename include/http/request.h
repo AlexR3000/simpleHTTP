@@ -1,15 +1,21 @@
 #pragma once
+#include "methods.h"
+
 #include <string>
 #include <unordered_map>
+#include <vector>
+
 
 
 namespace Http {
+    using AttributeMap = std::unordered_map<std::string, std::vector<std::string>>;
     class Request {
     public:
-        std::string method;
-        std::string target;
+        Method method;
+        std::string url;
         std::string version;
-        std::unordered_map<std::string, std::string> headers;
+        size_t contentLength;
+        AttributeMap headers;
         std::string body;
     };
 };

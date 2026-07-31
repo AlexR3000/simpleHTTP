@@ -4,6 +4,7 @@ namespace Http {
     enum class ParseError {
         None,
         InvalidAttribute,
+        InvalidRequest,
         MissingAttribute,
     };
 }
